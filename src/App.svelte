@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { Button, Textarea, Input, Label } from "flowbite-svelte";
+  import { LockSolid } from "flowbite-svelte-icons";
   let apiKey = "";
 
   import { OpenAI } from "openai";
@@ -31,15 +33,24 @@
 </script>
 
 <main class="flex-column h-screen w-screen" style="min-width:800px;">
-  <header class="h-[5vh] flex px-5 items-center">
+  <header class="h-[5vh] flex p-4 items-center">
     <h1 class="text-xl flex-1">PromptManager</h1>
 
-    <div>
-      <span>OpenAI API Key</span>
-      <input bind:value={apiKey} type="text" placeholder="..." />
+    <div class="flex items-center space-x-4">
+      <div>
+        <Label>OpenAI API Key</Label>
+      </div>
+      <div>
+        <Input bind:value={apiKey} type="text">
+          <LockSolid
+            slot="left"
+            class="w-4 h-4 text-gray-500 dark:text-gray-400"
+          />
+        </Input>
+      </div>
     </div>
   </header>
-  <div class="h-[95vh] flex flex-col p-5">
+  <div class="h-[95vh] flex flex-col pb-4 pr-4 pl-4">
     <div class="flex flex-1 overflow-hidden">
       <div class="flex-1 overflow-auto" style="min-width:40%;">
         {#each prompts as prompt, idx}
@@ -61,19 +72,18 @@
         {/if}
       </div>
     </div>
-    <div class="flex items-center">
-      <textarea
+    <div class="flex items-center space-x-4">
+      <Textarea
         bind:value={prompt}
         class="flex-1"
         style="resize:none;"
         placeholder="Lakeside view of the mountains..."
       />
-      <input
-        type="button"
+      <Button
+        color="blue"
         disabled={prompt == "" || apiKey == ""}
-        on:click={submitPrompt}
-        value="Submit"
-      />
+        on:click={submitPrompt}>Submit</Button
+      >
     </div>
   </div>
 </main>

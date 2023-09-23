@@ -37,10 +37,12 @@
       {
         "fullscreen": false,
         "resizable": true,
-        "title": "promptmanager",
+        "title": "PromptManager",
         "width": 800,
         "height": 600,
-        "minWidth": 800
+        "minWidth": 800,
+        "minHeight": 600,
+        "center": true
       }
     ]
   }
