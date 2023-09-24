@@ -1,11 +1,10 @@
 <script lang="ts">
   import { invoke } from "@tauri-apps/api/tauri";
+  import { Body, Client, ResponseType, getClient } from "@tauri-apps/api/http";
   import { Button, Textarea, Input, Label } from "flowbite-svelte";
   import { LockSolid } from "flowbite-svelte-icons";
+
   let apiKey = "";
-
-  import { OpenAI } from "openai";
-
   let imageSource =
     "https://cdn.openai.com/labs/images/%22A%20sea%20otter%20with%20a%20pearl%20earring%22%20by%20Johannes%20Vermeer.webp?v=1";
 
@@ -17,21 +16,26 @@
       return;
     }
 
-    // const openai = new OpenAI({
-    //   apiKey: apiKey,
-    //   dangerouslyAllowBrowser: true,
-    // });
-    // const image = await openai.images.generate({
-    //   prompt: prompt,
-    // });
+    (await getClient())
+      .post(
+        "https://api.openai.com/v1/images/generations",
+        Body.json({
+          prompt: prompt,
+          n: 1,
+          size: "1024x1024",
+        }),
+        {
+          responseType: ResponseType.JSON,
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+          },
+        }
+      )
+      .then((response) => {
+        console.log(response);
+        imageSource = response.data["data"][0]["url"];
+      });
 
-    // Decent sidestep but probably not amazing
-    invoke("generate_image", { apiToken: apiKey, prompt: prompt })
-      .then((b64Image) => {
-        console.log(b64Image);
-        imageSource = `data:image/png;base64, ${b64Image}`;
-      })
-      .catch((error) => console.error(error));
     prompts = [prompt, ...prompts];
     prompt = "";
   }
