@@ -8,46 +8,30 @@
   let imageSource =
     "https://cdn.openai.com/labs/images/%22A%20sea%20otter%20with%20a%20pearl%20earring%22%20by%20Johannes%20Vermeer.webp?v=1";
 
-  let prompt: string = "";
-  let prompts: string[] = [];
+  let prompt: string = "Test prompt";
+  let prompts: string[] = new Array(50).fill("Text");
 
   async function submitPrompt() {
     if (prompt == "") {
       return;
     }
 
-    (await getClient())
-      .post(
-        "https://api.openai.com/v1/images/generations",
-        Body.json({
-          prompt: prompt,
-          n: 1,
-          size: "1024x1024",
-        }),
-        {
-          responseType: ResponseType.JSON,
-          headers: {
-            Authorization: `Bearer ${apiKey}`,
-          },
-        }
-      )
-      .then((response) => {
-        console.log(response);
-        imageSource = response.data["data"][0]["url"];
-      });
+    // invoke("generate_image", { apiToken: apiKey, prompt: prompt })
+    //   .then((b64Image) => {
+    //     console.log(b64Image);
+    //     imageSource = `data:image/png;base64, ${b64Image}`;
+    //   })
+    //   .catch((error) => console.error(error));
 
     prompts = [prompt, ...prompts];
-    prompt = "";
+    prompt = "Test";
   }
 </script>
 
-<main class="flex-column h-screen w-screen" style="min-width:800px;">
-  <header
-    class="h-[5vh] flex p-4 items-center border-b"
-    style="min-height:48px"
-  >
+<main>
+  <!-- Header -->
+  <div class="h-16 flex items-center border-b px-4">
     <h1 class="text-xl flex-1">PromptManager</h1>
-
     <div class="flex items-center space-x-4">
       <div>
         <Label>OpenAI API Key</Label>
@@ -61,41 +45,50 @@
         </Input>
       </div>
     </div>
-  </header>
-  <div class="h-[95vh] flex flex-col pb-4 pr-4 pl-4">
-    <div class="flex flex-1 overflow-hidden space-x-4">
-      <div class="flex-1 overflow-auto" style="min-width:30%; max-width:50%;">
-        {#each prompts as prompt, idx}
-          <p class="p-2" style="word-wrap: break-word; white-space: pre-line;">
-            {prompt}
-          </p>
-          {#if idx != prompts.length - 1}
-            <hr />
-          {/if}
-        {/each}
+  </div>
+  <!-- Header -->
+
+  <!-- Prompt Input -->
+  <div class="h-24 flex items-center px-4 space-x-4">
+    <Textarea
+      bind:value={prompt}
+      class="flex-1"
+      style="resize:none;"
+      placeholder="Lakeside view of the mountains..."
+    />
+    <Button
+      color="blue"
+      disabled={prompt == "" || apiKey == ""}
+      on:click={submitPrompt}>Submit</Button
+    >
+  </div>
+  <!-- Prompt Input -->
+
+  <div class="">
+    <div class="flex space-x-4 px-4">
+      <div class="flex-1">
+        <ul class="overflow-y-scroll divide-y" style="min-width:30%;">
+          {#each prompts as prompt}
+            <li
+              class="py-2"
+              style="word-wrap: break-word; white-space: pre-line;"
+            >
+              {prompt}
+            </li>
+          {/each}
+        </ul>
       </div>
-      <div class="flex place-content-center" style="max-width:50%">
+      <div class="flex" style="max-width:50%">
         {#if imageSource != ""}
-          <img
-            class="aspect-square object-contain rounded-lg"
-            src={imageSource}
-            alt="Prompt Result"
-          />
+          <div>
+            <img
+              class="aspect-square object-contain rounded-lg"
+              src={imageSource}
+              alt="Prompt Result"
+            />
+          </div>
         {/if}
       </div>
-    </div>
-    <div class="flex items-center space-x-4" style="min-height:64px">
-      <Textarea
-        bind:value={prompt}
-        class="flex-1"
-        style="resize:none;"
-        placeholder="Lakeside view of the mountains..."
-      />
-      <Button
-        color="blue"
-        disabled={prompt == "" || apiKey == ""}
-        on:click={submitPrompt}>Submit</Button
-      >
     </div>
   </div>
 </main>
