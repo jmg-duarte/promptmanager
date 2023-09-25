@@ -7,8 +7,8 @@
   let imageSource =
     "https://cdn.openai.com/labs/images/%22A%20sea%20otter%20with%20a%20pearl%20earring%22%20by%20Johannes%20Vermeer.webp?v=1";
 
-  let prompt: string = "Test prompt";
-  let prompts: string[] = new Array(50).fill("Text");
+  let prompt: string = "";
+  let prompts: string[] = [];
 
   async function submitPrompt() {
     if (prompt == "") {
